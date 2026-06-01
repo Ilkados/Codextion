@@ -2,8 +2,7 @@
 # define DONGLE_H
 
 # include <pthread.h>
-
-typedef struct s_queue  t_queue;
+# include "queue.h"
 
 typedef struct s_dongle
 {

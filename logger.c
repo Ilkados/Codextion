@@ -18,12 +18,12 @@ void    log_action(t_simulation *sim, int coder_id, int message_type)
         "is compiling",
         "is debugging",
         "is refactoring",
-        "burned out",
+        "burned out"
     };
     long    timestamp;
 
     pthread_mutex_lock(&sim->print_mutex);
     timestamp = get_time() - sim->start_time;
-    printf("%ld %d %s\n", timestamp, coder_id, messages [message_type]);
+    printf("%ld %d %s\n", timestamp, coder_id, messages[message_type]);
     pthread_mutex_unlock(&sim->print_mutex);
 }

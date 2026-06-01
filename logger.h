@@ -13,5 +13,3 @@ void    log_action(t_simulation *sim, int coder_id, int message_type);
 long    get_time(void);
 
 #endif
-
-
