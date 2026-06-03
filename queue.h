@@ -13,4 +13,7 @@ typedef struct s_queue
     int     size;
 }   t_queue;
 
+
+void    enqueue(t_queue *queue, int coder_id, long priority);
+t_entry dequeue(t_queue *queue);
 #endif

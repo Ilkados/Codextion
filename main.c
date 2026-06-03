@@ -1,1 +1,4 @@
-dsfgsdfgsdfgASDFJ;ALSDKFJ;ALSKDasdfasdfasdaskld;jf;lkajs;dkfj;al
+#include<pthread.h>
+#include"coder.h"
+#include"dongle.h"
+
