@@ -23,7 +23,7 @@ void    take_dongle(t_dongle *dongle, t_coder *coder)
     }
     dongle->is_taken = 1;
     dequeue(&dongle->queue);
-    pthread_mutex_unloqueueck(&dongle->mutex);
+    pthread_mutex_unlock(&dongle->mutex);
 }
 
 void    release_dongle(t_dongle *dongle)
