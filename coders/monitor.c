@@ -6,23 +6,32 @@
 int    check_burnout(t_coder *coder)
 {
 	long    time_since_compile;
-
+	pthread_mutex_lock(&coder);
 	time_since_compile = get_time() - coder->last_compile_time;
+	pthread_mutex_unlock(&coder);
 	if (time_since_compile > coder->sim->time_to_burnout)
 		return (1);
 	return (0);
 }
 
-int all_compiles_done(t_coder *coders,int nb_compiles_required,int total_coder )
+int all_compiles_done(t_coder *coders, int nb_compiles_required, int total_coder)
 {
-	 int i=0;
-	 while (i<total_coder)
-	 {
-		if(coders[i].compile_count < nb_compiles_required)
-			return 0 ;
-		i++;
-	 }
-	return  1;
+    int i = 0;
+    int safe_count; 
+    while (i < total_coder)
+    {
+        pthread_mutex_lock(&coders[i].mutex);
+        
+        safe_count = coders[i].compile_count; 
+        
+        pthread_mutex_unlock(&coders[i].mutex);
+
+        if (safe_count < nb_compiles_required)
+            return (0);
+            
+        i++;
+    }
+    return (1);
 }
 void    *monitor_routine(void *arg)
 {
@@ -48,10 +57,10 @@ void    *monitor_routine(void *arg)
 				j =0;
 				while (j< sim->nb_coders)
 				{
-					pthread_cond_broadcast(&sim->dongles->cond);
+					pthread_cond_broadcast(&sim->dongles[j].cond);
 					j++;
 				}
-				
+				return (NULL);
 			}
 			i++;
 		}

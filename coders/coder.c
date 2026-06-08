@@ -9,7 +9,8 @@ void    *coder_routine(void *arg)
 	t_coder *coder;
     t_dongle *first,*second;
 	coder = (t_coder *)arg;
-    if(coder->coder_id % 2 == 0)
+
+	if(coder->coder_id % 2 == 0)
     {
         first = coder->right_dongle;
         second = coder->left_dongle;
@@ -26,11 +27,19 @@ void    *coder_routine(void *arg)
 		
 		take_dongle(second, coder);
 		log_action(coder->sim, coder->coder_id, TOOK_DONGLE);
+		
+		pthread_mutex_lock(&coder->mutex);
 		coder->last_compile_time = get_time();
+		pthread_mutex_unlock(&coder->mutex);
+
+
 		log_action(coder->sim, coder->coder_id, COMPILING);
 		usleep(coder->sim->time_to_compile * 1000);
 		
+		pthread_mutex_lock(&coder->mutex);
 		coder->compile_count++;
+		pthread_mutex_unlock(&coder->mutex);
+		
 		release_dongle(first);
 		release_dongle(second);
 		log_action(coder->sim, coder->coder_id, DEBUGGING);

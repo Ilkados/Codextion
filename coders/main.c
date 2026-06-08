@@ -28,13 +28,15 @@ int    main(int argc, char **argv)
 	i = 0;
 	while (i < sim.nb_coders)
 	{
+		//dongle info 
 		sim.dongles[i].is_taken = 0;
 		sim.dongles[i].release_time = 0;
 		pthread_mutex_init(&sim.dongles[i].mutex, NULL);
 		pthread_cond_init(&sim.dongles[i].cond, NULL);
 		sim.dongles[i].queue.size = 0;
-		sim.dongles[i].queue.entries = malloc(sizeof(t_entry) * sim.nb_coders);
+		sim.dongles[i].queue.entries = malloc(sizeof(t_entry) * 2);
 		
+		//coder info 
         sim.coders[i].coder_id = i + 1;
 		sim.coders[i].left_dongle = &sim.dongles[i];
 		sim.coders[i].right_dongle = &sim.dongles[(i + 1) % sim.nb_coders];

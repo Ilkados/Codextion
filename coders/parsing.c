@@ -3,18 +3,26 @@
 #include <string.h>
 #include <stdlib.h>
 
-int    is_valid_number(char *str)
+int is_valid_number(char *str)
 {
-	int i;
+    int i;
 
-	i = 0;
-	while (str[i] != '\0')
-	{
-		if (str[i] < '0' || str[i] > '9')
-			return (0);
-		i++;
-	}
-	return (1);
+    i = 0;
+    if (str[i] == '\0')
+        return (0);
+    if (str[i] == '-')
+        return (0);
+    if (str[i] == '+')
+        i++;
+    if (str[i] == '\0')
+        return (0);
+    while (str[i] != '\0')
+    {
+        if (str[i] < '0' || str[i] > '9')
+            return (0);
+        i++;
+    }
+    return (1);
 }
 
 int    parsing(int argc, char **argv, t_simulation *sim)

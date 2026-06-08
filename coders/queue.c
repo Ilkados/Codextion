@@ -24,6 +24,7 @@ void    sift_up(t_entry *arr, int index)
 		else
 			break ;
 	}
+	return; 
 }
 
 void    sift_down(t_entry *arr, int index, int size)
@@ -47,8 +48,9 @@ void    sift_down(t_entry *arr, int index, int size)
 			index = smallest;
 		}
 		else
-			break ;
+			break;
 	}
+	return;
 }
 
 void    enqueue(t_queue *queue, int coder_id, long priority)
