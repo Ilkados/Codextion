@@ -9,12 +9,18 @@
 void take_dongle(t_dongle *dongle, t_coder *coder)
 {
     long priority;
-
+    long safe_compile_time;
     pthread_mutex_lock(&dongle->mutex);
     if (coder->sim->scheduler == 0)
         priority = get_time();
     else
-        priority = coder->last_compile_time + coder->sim->time_to_burnout;
+    {
+        pthread_mutex_lock(&coder->mutex);
+        safe_compile_time = coder->last_compile_time;
+        pthread_mutex_unlock(&coder->mutex);
+        priority = safe_compile_time + coder->sim->time_to_burnout;
+    }
+    
     enqueue(&dongle->queue, coder->coder_id, priority);
     while (coder->sim->is_running
         && (dongle->is_taken == 1
