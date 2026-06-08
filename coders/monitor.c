@@ -6,9 +6,9 @@
 int    check_burnout(t_coder *coder)
 {
 	long    time_since_compile;
-	pthread_mutex_lock(&coder);
+	pthread_mutex_lock(&coder->mutex);
 	time_since_compile = get_time() - coder->last_compile_time;
-	pthread_mutex_unlock(&coder);
+	pthread_mutex_unlock(&coder->mutex);
 	if (time_since_compile > coder->sim->time_to_burnout)
 		return (1);
 	return (0);
