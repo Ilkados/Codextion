@@ -63,17 +63,17 @@ void	*coder_routine(void *arg)
 		first = coder->left_dongle;
 		second = coder->right_dongle;
 	}
-	while (coder->sim->is_running)
+	while (is_sim_running(coder->sim))
 	{
 		if (take_both_dongles(first, second, coder))
 			break ;
 		do_compile(coder);
 		release_dongle(first);
 		release_dongle(second);
-			if (!coder->sim->is_running)
+			if (!is_sim_running(coder->sim))
 			break ;
 		do_debug(coder);
-		if (!coder->sim->is_running)
+		if (!is_sim_running(coder->sim))
 			break ;
 		do_refactor(coder);
 	}

@@ -46,7 +46,7 @@ int    parsing(int argc, char **argv, t_simulation *sim)
 	sim->time_to_debug        = atoi(argv[4]);
 	sim->time_to_refactor     = atoi(argv[5]);
 	sim->nb_compiles_required = atoi(argv[6]);
-	sim->dongle_cooldown      = atoi(argv[7]);
+	sim->dongle_colddown      = atoi(argv[7]);
 	if (strcmp(argv[8], "fifo") == 0)
 		sim->scheduler = 0;
 	else

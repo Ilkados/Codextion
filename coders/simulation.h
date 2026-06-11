@@ -13,7 +13,7 @@ typedef struct s_simulation
 	int             time_to_debug;
 	int             time_to_refactor;
 	int             nb_compiles_required;
-	int             dongle_cooldown;
+	int             dongle_colddown;
 	int             scheduler;
 	long            start_time;
 	int             is_running;
@@ -21,5 +21,7 @@ typedef struct s_simulation
 	t_coder         *coders;
 	t_dongle        *dongles;
 }   t_simulation;
+
+int is_sim_running(t_simulation *sim);
 
 #endif

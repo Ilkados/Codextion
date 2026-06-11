@@ -53,7 +53,9 @@ void    *monitor_routine(void *arg)
 			if (check_burnout(&sim->coders[i]) == 1)
 			{
 				log_action(sim, sim->coders[i].coder_id, BURNED_OUT);
-				sim->is_running = 0;
+				pthread_mutex_lock(&sim->print_mutex);
+    			sim->is_running = 0;
+    			pthread_mutex_unlock(&sim->print_mutex);
 				j =0;
 				while (j< sim->nb_coders)
 				{

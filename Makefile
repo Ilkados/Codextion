@@ -4,7 +4,7 @@ CC = cc
 
 FLAGS = -Wall -Wextra -Werror -pthread
 
-SRC = coders/main.c coders/logger.c coders/queue.c coders/parsing.c coders/dongle.c coders/coder.c coders/monitor.c
+SRC = coders/main.c coders/logger.c coders/queue.c coders/parsing.c coders/dongle.c coders/coder.c coders/monitor.c coders/simulation.c
 
 OBJ = $(SRC:.c=.o)
 

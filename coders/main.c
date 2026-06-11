@@ -34,7 +34,7 @@ int    main(int argc, char **argv)
 		pthread_mutex_init(&sim.dongles[i].mutex, NULL);
 		pthread_cond_init(&sim.dongles[i].cond, NULL);
 		sim.dongles[i].queue.size = 0;
-		sim.dongles[i].queue.entries = malloc(sizeof(t_entry) * 2);
+		sim.dongles[i].queue.entries = malloc(sizeof(t_entry) * sim.nb_coders);
 		
 		//coder info 
         sim.coders[i].coder_id = i + 1;
