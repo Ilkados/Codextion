@@ -2,9 +2,19 @@ NAME = codexion
 
 CC = cc
 
-FLAGS = -Wall -Wextra -Werror -pthread
+FLAGS = -Wall -Wextra -Werror -pthread -g
 
-SRC = coders/main.c coders/logger.c coders/queue.c coders/parsing.c coders/dongle.c coders/coder.c coders/monitor.c coders/simulation.c
+SRC = coders/main.c \
+      coders/logger.c \
+      coders/queue.c \
+      coders/parsing.c \
+      coders/dongle.c \
+      coders/coder.c \
+      coders/monitor.c \
+      coders/simulation.c \
+      coders/threads.c \
+      coders/init.c \
+      coders/queue_utils.c
 
 OBJ = $(SRC:.c=.o)
 

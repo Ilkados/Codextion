@@ -1,11 +1,13 @@
+#include <unistd.h>
 #include "coder.h"
 #include "simulation.h"
 #include "logger.h"
-#include <unistd.h>
+#include "monitor.h"
 
-int    check_burnout(t_coder *coder)
+static int	check_burnout(t_coder *coder)
 {
-	long    time_since_compile;
+	long	time_since_compile;
+
 	pthread_mutex_lock(&coder->mutex);
 	time_since_compile = get_time() - coder->last_compile_time;
 	pthread_mutex_unlock(&coder->mutex);
@@ -14,57 +16,57 @@ int    check_burnout(t_coder *coder)
 	return (0);
 }
 
-int all_compiles_done(t_coder *coders, int nb_compiles_required, int total_coder)
+static int	all_compiles_done(t_simulation *sim)
 {
-    int i = 0;
-    int safe_count; 
-    while (i < total_coder)
-    {
-        pthread_mutex_lock(&coders[i].mutex);
-        
-        safe_count = coders[i].compile_count; 
-        
-        pthread_mutex_unlock(&coders[i].mutex);
+	int	i;
+	int	safe_count;
 
-        if (safe_count < nb_compiles_required)
-            return (0);
-            
-        i++;
-    }
-    return (1);
+	i = 0;
+	while (i < sim->nb_coders)
+	{
+		pthread_mutex_lock(&sim->coders[i].mutex);
+		safe_count = sim->coders[i].compile_count;
+		pthread_mutex_unlock(&sim->coders[i].mutex);
+		if (safe_count < sim->nb_compiles_required)
+			return (0);
+		i++;
+	}
+	return (1);
 }
-void    *monitor_routine(void *arg)
+
+static int	find_burnout(t_simulation *sim)
 {
-	t_simulation    *sim;
-	int             i;
+	int	i;
+
+	i = 0;
+	while (i < sim->nb_coders)
+	{
+		if (check_burnout(&sim->coders[i]) == 1)
+			return (i);
+		i++;
+	}
+	return (-1);
+}
+
+void	*monitor_routine(void *arg)
+{
+	t_simulation	*sim;
+	int				i;
 
 	sim = (t_simulation *)arg;
-	while (sim->is_running)
+	while (is_sim_running(sim))
 	{
-		if( all_compiles_done (sim->coders,sim->nb_compiles_required,sim->nb_coders)== 1 )
+		if (all_compiles_done(sim) == 1)
 		{
-			sim->is_running = 0;
+			stop_and_wake_all(sim);
 			return (NULL);
 		}
-		i = 0;
-		int j;
-		while (i < sim->nb_coders)
+		i = find_burnout(sim);
+		if (i >= 0)
 		{
-			if (check_burnout(&sim->coders[i]) == 1)
-			{
-				log_action(sim, sim->coders[i].coder_id, BURNED_OUT);
-				pthread_mutex_lock(&sim->print_mutex);
-    			sim->is_running = 0;
-    			pthread_mutex_unlock(&sim->print_mutex);
-				j =0;
-				while (j< sim->nb_coders)
-				{
-					pthread_cond_broadcast(&sim->dongles[j].cond);
-					j++;
-				}
-				return (NULL);
-			}
-			i++;
+			log_action(sim, sim->coders[i].coder_id, BURNED_OUT);
+			stop_and_wake_all(sim);
+			return (NULL);
 		}
 		usleep(1000);
 	}

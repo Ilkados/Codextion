@@ -3,6 +3,6 @@
 
 # include "simulation.h"
 
-int     parsing(int argc, char **argv, t_simulation *sim);
+int	parsing(int argc, char **argv, t_simulation *sim);
 
 #endif

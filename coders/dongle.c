@@ -1,17 +1,17 @@
 #include <pthread.h>
+#include <time.h>
 #include "coder.h"
 #include "dongle.h"
 #include "queue.h"
 #include "simulation.h"
 #include "logger.h"
-#include <time.h>
 
 static long	compute_priority(t_coder *coder)
 {
 	long	last_compile;
 
 	if (coder->sim->scheduler == 0)
-		return (get_time());
+		return (0);
 	pthread_mutex_lock(&coder->mutex);
 	last_compile = coder->last_compile_time;
 	pthread_mutex_unlock(&coder->mutex);
@@ -24,7 +24,7 @@ static int	dongle_unavailable(t_dongle *dongle, t_coder *coder)
 		return (1);
 	if (dongle->queue.entries[0].coder_id != coder->coder_id)
 		return (1);
-	if (get_time() - dongle->release_time < coder->sim->dongle_colddown)
+	if (get_time() - dongle->release_time < coder->sim->dongle_cooldown)
 		return (1);
 	return (0);
 }
@@ -34,15 +34,17 @@ static void	cooldown_sleep(t_dongle *dongle, t_coder *coder)
 	struct timespec	ts;
 	long			target_ms;
 
-	target_ms = dongle->release_time + coder->sim->dongle_colddown;
+	target_ms = dongle->release_time + coder->sim->dongle_cooldown;
 	ts.tv_sec = target_ms / 1000;
 	ts.tv_nsec = (target_ms % 1000) * 1000000;
 	pthread_cond_timedwait(&dongle->cond, &dongle->mutex, &ts);
 }
 
-static void	wait_for_dongle(t_dongle *dongle, t_coder *coder)
+int	take_dongle(t_dongle *dongle, t_coder *coder)
 {
-	while (coder->sim->is_running && dongle_unavailable(dongle, coder))
+	pthread_mutex_lock(&dongle->mutex);
+	enqueue(&dongle->queue, coder->coder_id, compute_priority(coder));
+	while (is_sim_running(coder->sim) && dongle_unavailable(dongle, coder))
 	{
 		if (dongle->is_taken == 0
 			&& dongle->queue.entries[0].coder_id == coder->coder_id)
@@ -50,19 +52,15 @@ static void	wait_for_dongle(t_dongle *dongle, t_coder *coder)
 		else
 			pthread_cond_wait(&dongle->cond, &dongle->mutex);
 	}
-}
-
-void	take_dongle(t_dongle *dongle, t_coder *coder)
-{
-	pthread_mutex_lock(&dongle->mutex);
-	enqueue(&dongle->queue, coder->coder_id, compute_priority(coder));
-	wait_for_dongle(dongle, coder);
-	if (coder->sim->is_running)
+	if (is_sim_running(coder->sim))
 	{
 		dongle->is_taken = 1;
 		dequeue(&dongle->queue);
+		pthread_mutex_unlock(&dongle->mutex);
+		return (0);
 	}
 	pthread_mutex_unlock(&dongle->mutex);
+	return (1);
 }
 
 void	release_dongle(t_dongle *dongle)

@@ -1,76 +1,25 @@
 #include "queue.h"
 
-void    swap(t_entry *arr, int index_a, int index_b)
+void	enqueue(t_queue *queue, int coder_id, long priority)
 {
-	t_entry temp;
+	t_entry	entry;
 
-	temp         = arr[index_a];
-	arr[index_a] = arr[index_b];
-	arr[index_b] = temp;
-}
-
-void    sift_up(t_entry *arr, int index)
-{
-	int parent;
-
-	while (index > 0)
-	{
-		parent = (index - 1) / 2;
-		if (arr[index].priority < arr[parent].priority)
-		{
-			swap(arr, parent, index);
-			index = parent;
-		}
-		else
-			break ;
-	}
-	return; 
-}
-
-void    sift_down(t_entry *arr, int index, int size)
-{
-	int left;
-	int right;
-	int smallest;
-
-	while (index < size)
-	{
-		left     = (index * 2) + 1;
-		right    = (index * 2) + 2;
-		smallest = index;
-		if (left < size && arr[left].priority < arr[smallest].priority)
-			smallest = left;
-		if (right < size && arr[right].priority < arr[smallest].priority)
-			smallest = right;
-		if (smallest != index)
-		{
-			swap(arr, smallest, index);
-			index = smallest;
-		}
-		else
-			break;
-	}
-	return;
-}
-
-void    enqueue(t_queue *queue, int coder_id, long priority)
-{
-	t_entry coder;
-
-	coder.coder_id = coder_id;
-	coder.priority = priority;
-	queue->entries[queue->size] = coder;
+	entry.coder_id = coder_id;
+	entry.priority = priority;
+	entry.seq = queue->seq;
+	queue->seq++;
+	queue->entries[queue->size] = entry;
 	queue->size++;
-	sift_up(queue->entries, queue->size - 1);
+	shift_up(queue->entries, queue->size - 1);
 }
 
-t_entry dequeue(t_queue *queue)
+t_entry	dequeue(t_queue *queue)
 {
-	t_entry coder;
+	t_entry	entry;
 
-	coder = queue->entries[0];
+	entry = queue->entries[0];
 	queue->entries[0] = queue->entries[queue->size - 1];
 	queue->size--;
-	sift_down(queue->entries, 0, queue->size);
-	return (coder);
+	shift_down(queue->entries, 0, queue->size);
+	return (entry);
 }
