@@ -15,6 +15,7 @@
 #include "coder.h"
 #include "dongle.h"
 #include "logger.h"
+#include "stdio.h"
 
 int	take_both_dongles(t_dongle *first, t_dongle *second,
 				t_coder *coder)
@@ -69,6 +70,10 @@ void	*coder_routine(void *arg)
 		left = coder->right_dongle;
 		righ = coder->left_dongle;
 	}
-	execute_cycle(coder, left, righ);
+	while (is_sim_running(coder->sim))
+	{
+		if (execute_cycle(coder, left, righ))
+			break ;
+	}
 	return (NULL);
 }

@@ -16,7 +16,7 @@
 #include "logger.h"
 #include "monitor.h"
 
-static int	check_burnout(t_coder *coder)
+int	check_burnout(t_coder *coder)
 {
 	long	time_since_compile;
 
@@ -28,7 +28,7 @@ static int	check_burnout(t_coder *coder)
 	return (0);
 }
 
-static int	all_compiles_done(t_simulation *sim)
+int	all_compiles_done(t_simulation *sim)
 {
 	int	i;
 	int	safe_count;
@@ -46,7 +46,7 @@ static int	all_compiles_done(t_simulation *sim)
 	return (1);
 }
 
-static int	find_burnout(t_simulation *sim)
+int	find_burnout(t_simulation *sim)
 {
 	int	i;
 

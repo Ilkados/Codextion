@@ -17,8 +17,9 @@
 #include "queue.h"
 #include "simulation.h"
 #include "logger.h"
+#include "stdio.h"
 
-static long	compute_priority(t_coder *coder)
+long	compute_priority(t_coder *coder)
 {
 	long	last_compile;
 
@@ -30,7 +31,7 @@ static long	compute_priority(t_coder *coder)
 	return (last_compile + coder->sim->time_to_burnout);
 }
 
-static int	dongle_unavailable(t_dongle *dongle, t_coder *coder)
+int	dongle_unavailable(t_dongle *dongle, t_coder *coder)
 {
 	if (dongle->is_taken == 1)
 		return (1);
@@ -41,15 +42,18 @@ static int	dongle_unavailable(t_dongle *dongle, t_coder *coder)
 	return (0);
 }
 
-static void	cooldown_sleep(t_dongle *dongle, t_coder *coder)
+void	cooldown_sleep(t_dongle *dongle, t_coder *coder)
 {
-	struct timespec	ts;
-	long			target_ms;
+	long	remaining_ms;
 
-	target_ms = dongle->release_time + coder->sim->dongle_cooldown;
-	ts.tv_sec = target_ms / 1000;
-	ts.tv_nsec = (target_ms % 1000) * 1000000;
-	pthread_cond_timedwait(&dongle->cond, &dongle->mutex, &ts);
+	remaining_ms = coder->sim->dongle_cooldown
+		- (get_time() - dongle->release_time);
+	if (remaining_ms > 0)
+	{
+		pthread_mutex_unlock(&dongle->mutex);
+		smart_sleep(remaining_ms, coder->sim);
+		pthread_mutex_lock(&dongle->mutex);
+	}
 }
 
 int	take_dongle(t_dongle *dongle, t_coder *coder)

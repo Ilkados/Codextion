@@ -15,7 +15,7 @@
 #include "simulation.h"
 #include "parsing.h"
 
-static int	is_valid_number(char *str)
+int	is_valid_number(char *str)
 {
 	int	i;
 
@@ -37,7 +37,7 @@ static int	is_valid_number(char *str)
 	return (1);
 }
 
-static int	fits_in_int(char *str)
+int	fits_in_int(char *str)
 {
 	int	i;
 	int	len;
@@ -55,7 +55,7 @@ static int	fits_in_int(char *str)
 	return (1);
 }
 
-static void	set_values(char **argv, t_simulation *sim)
+void	set_values(char **argv, t_simulation *sim)
 {
 	sim->nb_coders = atoi(argv[1]);
 	sim->time_to_burnout = atoi(argv[2]);
