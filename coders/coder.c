@@ -1,11 +1,23 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   coder.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: moboulir <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/06/20 23:01:16 by moboulir          #+#    #+#             */
+/*   Updated: 2026/06/20 23:04:47 by moboulir         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include <unistd.h>
 #include "simulation.h"
 #include "coder.h"
 #include "dongle.h"
 #include "logger.h"
 
-static int	take_both_dongles(t_dongle *first, t_dongle *second,
-		t_coder *coder)
+int	take_both_dongles(t_dongle *first, t_dongle *second,
+				t_coder *coder)
 {
 	if (take_dongle(first, coder))
 		return (1);
@@ -19,55 +31,44 @@ static int	take_both_dongles(t_dongle *first, t_dongle *second,
 	return (0);
 }
 
-static void	do_compile(t_coder *coder)
+void	do_compile(t_coder *coder)
 {
 	pthread_mutex_lock(&coder->mutex);
 	coder->last_compile_time = get_time();
 	pthread_mutex_unlock(&coder->mutex);
 	log_action(coder->sim, coder->coder_id, COMPILING);
-	usleep(coder->sim->time_to_compile * 1000);
+	smart_sleep(coder->sim->time_to_compile, coder->sim);
 	pthread_mutex_lock(&coder->mutex);
 	coder->compile_count++;
 	pthread_mutex_unlock(&coder->mutex);
 }
 
-static void	do_debug(t_coder *coder)
+void	do_debug(t_coder *coder)
 {
 	log_action(coder->sim, coder->coder_id, DEBUGGING);
-	usleep(coder->sim->time_to_debug * 1000);
+	smart_sleep(coder->sim->time_to_debug, coder->sim);
 }
 
-static void	do_refactor(t_coder *coder)
+void	do_refactor(t_coder *coder)
 {
 	log_action(coder->sim, coder->coder_id, REFACTORING);
-	usleep(coder->sim->time_to_refactor * 1000);
+	smart_sleep(coder->sim->time_to_refactor, coder->sim);
 }
 
 void	*coder_routine(void *arg)
 {
 	t_coder		*coder;
-	t_dongle	*first;
-	t_dongle	*second;
+	t_dongle	*left;
+	t_dongle	*righ;
 
 	coder = (t_coder *)arg;
-	first = coder->left_dongle;
-	second = coder->right_dongle;
+	left = coder->left_dongle;
+	righ = coder->right_dongle;
 	if (coder->coder_id % 2 == 0)
 	{
-		first = coder->right_dongle;
-		second = coder->left_dongle;
+		left = coder->right_dongle;
+		righ = coder->left_dongle;
 	}
-	while (is_sim_running(coder->sim))
-	{
-		if (take_both_dongles(first, second, coder))
-			break ;
-		do_compile(coder);
-		release_dongle(first);
-		release_dongle(second);
-		if (!is_sim_running(coder->sim))
-			break ;
-		do_debug(coder);
-		do_refactor(coder);
-	}
+	execute_cycle(coder, left, righ);
 	return (NULL);
 }
