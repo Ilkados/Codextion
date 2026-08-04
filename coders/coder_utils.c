@@ -28,18 +28,42 @@ void	smart_sleep(long sleep_time_in_ms, t_simulation *sim)
 	}
 }
 
-int	execute_cycle(t_coder *coder, t_dongle *left, t_dongle *righ)
+void	do_compile(t_coder *coder)
 {
-	if (take_both_dongles(left, righ, coder))
+	pthread_mutex_lock(&coder->mutex);
+	coder->last_compile_time = get_time();
+	pthread_mutex_unlock(&coder->mutex);
+	log_action(coder->sim, coder->coder_id, COMPILING);
+	smart_sleep(coder->sim->time_to_compile, coder->sim);
+	pthread_mutex_lock(&coder->mutex);
+	coder->compile_count++;
+	pthread_mutex_unlock(&coder->mutex);
+}
+
+void	do_debug(t_coder *coder)
+{
+	log_action(coder->sim, coder->coder_id, DEBUGGING);
+	smart_sleep(coder->sim->time_to_debug, coder->sim);
+}
+
+void	do_refactor(t_coder *coder)
+{
+	log_action(coder->sim, coder->coder_id, REFACTORING);
+	smart_sleep(coder->sim->time_to_refactor, coder->sim);
+}
+
+int	take_both_dongles(t_dongle *first, t_dongle *second,
+				t_coder *coder)
+{
+	if (take_dongle(first, coder))
 		return (1);
-	do_compile(coder);
-	release_dongle(left);
-	release_dongle(righ);
-	if (!is_sim_running(coder->sim))
+	log_action(coder->sim, coder->coder_id, TOOK_DONGLE);
+	if (take_dongle(second, coder))
+	{
+		release_dongle(first);
 		return (1);
-	do_debug(coder);
-	if (!is_sim_running(coder->sim))
-		return (1);
-	do_refactor(coder);
+	}
+	log_action(coder->sim, coder->coder_id, TOOK_DONGLE);
 	return (0);
 }
+

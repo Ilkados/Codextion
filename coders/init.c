@@ -28,11 +28,15 @@ static int	init_dongles(t_simulation *sim)
 		pthread_mutex_init(&sim->dongles[i].mutex, NULL);
 		pthread_cond_init(&sim->dongles[i].cond, NULL);
 		sim->dongles[i].queue.entries
-			= malloc(sizeof(t_entry) * (sim->nb_coders + 1));
+			= malloc(sizeof(t_entry) * 2);
 		if (!sim->dongles[i].queue.entries)
 		{
 			while (--i >= 0)
+			{
 				free(sim->dongles[i].queue.entries);
+				pthread_mutex_destroy(&sim->dongles[i].mutex);
+				pthread_cond_destroy(&sim->dongles[i].cond);
+			}
 			return (1);
 		}
 		i++;
@@ -40,7 +44,7 @@ static int	init_dongles(t_simulation *sim)
 	return (0);
 }
 
-static void	init_coders(t_simulation *sim)
+static int	init_coders(t_simulation *sim)
 {
 	int	i;
 
@@ -53,13 +57,22 @@ static void	init_coders(t_simulation *sim)
 		sim->coders[i].last_compile_time = sim->start_time;
 		sim->coders[i].compile_count = 0;
 		sim->coders[i].sim = sim;
-		pthread_mutex_init(&sim->coders[i].mutex, NULL);
+		if (pthread_mutex_init(&sim->coders[i].mutex, NULL)!=0)
+		{
+			while (--i >= 0)
+			{
+				pthread_mutex_destroy(&sim->coders[i].mutex);
+			}
+			return (1);
+		}
 		i++;
 	}
+	return (0);
 }
 
 int	init_simulation(t_simulation *sim)
 {
+	int i ;
 	sim->coders = malloc(sizeof(t_coder) * sim->nb_coders);
 	sim->dongles = malloc(sizeof(t_dongle) * sim->nb_coders);
 	if (!sim->coders || !sim->dongles)
@@ -77,6 +90,20 @@ int	init_simulation(t_simulation *sim)
 		free(sim->dongles);
 		return (1);
 	}
-	init_coders(sim);
+	if (init_coders(sim))
+	{
+    // tear down the walls
+    	i = 0;
+    	while (i < sim->nb_coders)
+    	{
+    	    free(sim->dongles[i].queue.entries);
+    	    pthread_mutex_destroy(&sim->dongles[i].mutex);
+    	    pthread_cond_destroy(&sim->dongles[i].cond);
+    	    i++;
+    	}
+    	free(sim->coders);
+    	free(sim->dongles);
+    	return (1);
+	}
 	return (0);
 }

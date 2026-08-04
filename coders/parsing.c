@@ -26,8 +26,6 @@ int	is_valid_number(char *str)
 		return (0);
 	if (str[i] == '+')
 		i++;
-	if (str[i] == '\0')
-		return (0);
 	while (str[i] != '\0')
 	{
 		if (str[i] < '0' || str[i] > '9')
@@ -69,6 +67,25 @@ void	set_values(char **argv, t_simulation *sim)
 		sim->scheduler = 0;
 }
 
+static int	invalid_values(t_simulation *sim)
+{
+	if (sim->nb_coders < 1)
+		return (1);
+	if (sim->time_to_burnout < 1)
+		return (1);
+	if (sim->time_to_compile < 1)
+		return (1);
+	if (sim->time_to_debug < 0)
+		return (1);
+	if (sim->time_to_refactor < 0)
+		return (1);
+	if (sim->nb_compiles_required < 1)
+		return (1);
+	if (sim->dongle_cooldown < 0)
+		return (1);
+	return (0);
+}
+
 int	parsing(int argc, char **argv, t_simulation *sim)
 {
 	int	i;
@@ -85,7 +102,7 @@ int	parsing(int argc, char **argv, t_simulation *sim)
 	if (strcmp(argv[8], "fifo") != 0 && strcmp(argv[8], "edf") != 0)
 		return (1);
 	set_values(argv, sim);
-	if (sim->nb_coders <= 0)
+	if (invalid_values(sim))
 		return (1);
 	return (0);
 }
