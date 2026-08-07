@@ -17,8 +17,6 @@
 #include "logger.h"
 #include "stdio.h"
 
-
-
 int	execute_cycle(t_coder *coder, t_dongle *left, t_dongle *righ)
 {
 	if (take_both_dongles(left, righ, coder))
@@ -34,6 +32,7 @@ int	execute_cycle(t_coder *coder, t_dongle *left, t_dongle *righ)
 	do_refactor(coder);
 	return (0);
 }
+
 void	*coder_routine(void *arg)
 {
 	t_coder		*coder;

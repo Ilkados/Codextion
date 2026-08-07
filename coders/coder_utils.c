@@ -66,4 +66,3 @@ int	take_both_dongles(t_dongle *first, t_dongle *second,
 	log_action(coder->sim, coder->coder_id, TOOK_DONGLE);
 	return (0);
 }
-
