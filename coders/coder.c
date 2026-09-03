@@ -15,7 +15,7 @@
 #include "coder.h"
 #include "dongle.h"
 #include "logger.h"
-#include "stdio.h"
+
 
 int	execute_cycle(t_coder *coder, t_dongle *left, t_dongle *righ)
 {

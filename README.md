@@ -21,7 +21,6 @@ Two twists distinguish it from the classic problem:
   implemented with a hand-written binary min-heap.
 
 ## Instructions
-
 ### Compilation
 
 ```sh
@@ -121,13 +120,11 @@ The simulation stops when every coder has compiled at least
 - *Operating Systems: Three Easy Pieces* — chapters on threads, locks and
   condition variables: https://pages.cs.wisc.edu/~remzi/OSTEP/
 - The Dining Philosophers problem:
-  https://en.wikipedia.org/wiki/Dining_philosophers_problem
 - POSIX threads documentation (`man pthread_mutex_lock`,
   `man pthread_cond_timedwait`, `man pthread_create`)
 - Coffman conditions: https://en.wikipedia.org/wiki/Deadlock#Necessary_conditions
 - Earliest Deadline First scheduling:
-  https://en.wikipedia.org/wiki/Earliest_deadline_first_scheduling
-- Binary heap / priority queue: https://en.wikipedia.org/wiki/Binary_heap
+- Binary heap / priority queue: https://www.youtube.com/watch?v=E2v9hBgG6gE
 
 ### How AI was used
 

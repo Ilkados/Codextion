@@ -33,5 +33,6 @@ void	shift_up(t_entry *arr, int index);
 void	shift_down(t_entry *arr, int index, int size);
 void	enqueue(t_queue *queue, int coder_id, long priority);
 t_entry	dequeue(t_queue *queue);
+void	remove_coder_from_queue(t_queue *queue, int coder_id);
 
 #endif

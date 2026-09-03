@@ -35,3 +35,32 @@ t_entry	dequeue(t_queue *queue)
 	shift_down(queue->entries, 0, queue->size);
 	return (entry);
 }
+
+void	remove_coder_from_queue(t_queue *queue, int coder_id)
+{
+	int i = 0; 
+	int size = queue->size;
+	
+	while(i<=size-1)
+	{
+		if (coder_id == queue->entries[i].coder_id)
+		{
+			if(i == queue->size -1)
+			{
+				queue->size--;
+				return ;
+			}
+			queue->entries[i] = queue->entries[queue->size-1];
+			queue->size--;
+			if (i > 0 && entry_less(&queue->entries[i],
+				&queue->entries[(i - 1) / 2]))
+				shift_up(queue->entries, i);
+			else
+				shift_down(queue->entries, i, queue->size);
+			return;
+			
+		}
+		i++;
+	}
+	return;
+}

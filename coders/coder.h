@@ -48,5 +48,7 @@ int		take_both_dongles(t_dongle *first, t_dongle *second, t_coder *coder);
 void	do_compile(t_coder *coder);
 void	do_debug(t_coder *coder);
 void	do_refactor(t_coder *coder);
+void	release_dongle(t_dongle *dongle);
+
 
 #endif
