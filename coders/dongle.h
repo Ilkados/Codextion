@@ -32,4 +32,6 @@ long	compute_priority(struct s_coder *coder);
 int		dongle_unavailable(t_dongle *dongle, struct s_coder *coder);
 int		take_dongle(t_dongle *dongle, struct s_coder *coder);
 int		try_take_dongle(t_dongle *dongle, struct s_coder *coder);
+void	wait_for_second_dongle_change(t_dongle *dongle, struct s_coder *coder);
+
 #endif

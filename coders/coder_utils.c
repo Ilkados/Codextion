@@ -70,6 +70,7 @@ int	take_both_dongles(t_dongle *first, t_dongle *second, t_coder *coder)
 		release_dongle(first);
 		if (result == STOPPED)
 			return (1);
+		wait_for_second_dongle_change(second, coder);
 	}
 	return (1);
 }
