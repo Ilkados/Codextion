@@ -15,15 +15,15 @@
 #include "coder.h"
 #include "dongle.h"
 #include "logger.h"
+#include "stdio.h"
 
-
-int	execute_cycle(t_coder *coder, t_dongle *left, t_dongle *righ)
+int	execute_cycle(t_coder *coder, t_dongle *left, t_dongle *right)
 {
-	if (take_both_dongles(left, righ, coder))
+	if (take_both_dongles(left, right, coder))
 		return (1);
 	do_compile(coder);
 	release_dongle(left);
-	release_dongle(righ);
+	release_dongle(right);
 	if (!is_sim_running(coder->sim))
 		return (1);
 	do_debug(coder);
@@ -35,21 +35,12 @@ int	execute_cycle(t_coder *coder, t_dongle *left, t_dongle *righ)
 
 void	*coder_routine(void *arg)
 {
-	t_coder		*coder;
-	t_dongle	*left;
-	t_dongle	*righ;
+	t_coder	*coder;
 
 	coder = (t_coder *)arg;
-	left = coder->left_dongle;
-	righ = coder->right_dongle;
-	if (coder->coder_id % 2 == 0)
-	{
-		left = coder->right_dongle;
-		righ = coder->left_dongle;
-	}
 	while (is_sim_running(coder->sim))
 	{
-		if (execute_cycle(coder, left, righ))
+		if (execute_cycle(coder, coder->left_dongle, coder->right_dongle))
 			break ;
 	}
 	return (NULL);

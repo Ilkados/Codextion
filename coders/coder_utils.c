@@ -52,25 +52,25 @@ void	do_refactor(t_coder *coder)
 	smart_sleep(coder->sim->time_to_refactor, coder->sim);
 }
 
-int	take_both_dongles(t_dongle *first, t_dongle *second, t_coder *coder)
+int	take_both_dongles(t_dongle *first, t_dongle *second,
+				t_coder *coder)
 {
-	int	result;
+	t_dongle	*tmp;
 
-	while (is_sim_running(coder->sim))
+	if (coder->coder_id % 2 == 0)
 	{
-		if (take_dongle(first, coder))
-			return (1);
-		log_action(coder->sim, coder->coder_id, TOOK_DONGLE);
-		result = try_take_dongle(second, coder);
-		if (result == TAKEN)
-		{
-			log_action(coder->sim, coder->coder_id, TOOK_DONGLE);
-			return (0);
-		}
-		release_dongle(first);
-		if (result == STOPPED)
-			return (1);
-		wait_for_second_dongle_change(second, coder);
+		tmp = first;
+		first = second;
+		second = tmp;
 	}
-	return (1);
+	if (take_dongle(first, coder))
+		return (1);
+	log_action(coder->sim, coder->coder_id, TOOK_DONGLE);
+	if (take_dongle(second, coder))
+	{
+		release_dongle(first);
+		return (1);
+	}
+	log_action(coder->sim, coder->coder_id, TOOK_DONGLE);
+	return (0);
 }

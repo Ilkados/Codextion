@@ -13,12 +13,11 @@
 #ifndef DONGLE_H
 # define DONGLE_H
 
-#define TAKEN 0
-#define BUSY 1
-#define STOPPED 2
-#include <pthread.h>
-#include "queue.h"
-struct s_coder;
+# include <pthread.h>
+# include "queue.h"
+
+struct	s_coder;
+
 typedef struct s_dongle
 {
 	pthread_mutex_t	mutex;
@@ -28,10 +27,7 @@ typedef struct s_dongle
 	t_queue			queue;
 }	t_dongle;
 
-long	compute_priority(struct s_coder *coder);
-int		dongle_unavailable(t_dongle *dongle, struct s_coder *coder);
 int		take_dongle(t_dongle *dongle, struct s_coder *coder);
-int		try_take_dongle(t_dongle *dongle, struct s_coder *coder);
-void	wait_for_second_dongle_change(t_dongle *dongle, struct s_coder *coder);
+void	release_dongle(t_dongle *dongle);
 
 #endif

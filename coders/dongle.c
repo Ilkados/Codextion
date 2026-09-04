@@ -62,10 +62,9 @@ int	take_dongle(t_dongle *dongle, t_coder *coder)
 	enqueue(&dongle->queue, coder->coder_id, compute_priority(coder));
 	while (is_sim_running(coder->sim) && dongle_unavailable(dongle, coder))
 	{
-		if (dongle->is_taken == 0 && dongle->queue.entries[0].coder_id == coder->coder_id)
-		{
+		if (dongle->is_taken == 0
+			&& dongle->queue.entries[0].coder_id == coder->coder_id)
 			cooldown_sleep(dongle, coder);
-		}
 		else
 			pthread_cond_wait(&dongle->cond, &dongle->mutex);
 	}
