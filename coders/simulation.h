@@ -30,6 +30,8 @@ typedef struct s_simulation
 	int				is_running;
 	long			start_time;
 	pthread_mutex_t	print_mutex;
+	pthread_mutex_t	resource_mutex;
+	pthread_cond_t	resource_cond;
 	t_coder			*coders;
 	t_dongle		*dongles;
 }	t_simulation;
@@ -38,6 +40,8 @@ int		is_sim_running(t_simulation *sim);
 void	stop_sim(t_simulation *sim);
 void	stop_and_wake_all(t_simulation *sim);
 int		init_simulation(t_simulation *sim);
+int		init_dongles(t_simulation *sim);
+int		init_coders(t_simulation *sim);
 int		start_threads(t_simulation *sim, pthread_t *threads,
 			pthread_t *monitor);
 void	join_threads(pthread_t *threads, int count);

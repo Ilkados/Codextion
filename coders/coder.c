@@ -22,8 +22,8 @@ int	execute_cycle(t_coder *coder, t_dongle *left, t_dongle *right)
 	if (take_both_dongles(left, right, coder))
 		return (1);
 	do_compile(coder);
-	release_dongle(left);
-	release_dongle(right);
+	release_dongle(left, coder->sim);
+	release_dongle(right, coder->sim);
 	if (!is_sim_running(coder->sim))
 		return (1);
 	do_debug(coder);

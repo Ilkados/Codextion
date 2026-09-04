@@ -51,7 +51,7 @@ static int	init_one_dongle(t_dongle *dongle)
 	return (0);
 }
 
-static int	init_dongles(t_simulation *sim)
+int	init_dongles(t_simulation *sim)
 {
 	int	i;
 
@@ -68,7 +68,7 @@ static int	init_dongles(t_simulation *sim)
 	return (0);
 }
 
-static int	init_coders(t_simulation *sim)
+int	init_coders(t_simulation *sim)
 {
 	int	i;
 
@@ -88,35 +88,6 @@ static int	init_coders(t_simulation *sim)
 			return (1);
 		}
 		i++;
-	}
-	return (0);
-}
-
-int	init_simulation(t_simulation *sim)
-{
-	sim->coders = malloc(sizeof(t_coder) * sim->nb_coders);
-	sim->dongles = malloc(sizeof(t_dongle) * sim->nb_coders);
-	if (!sim->coders || !sim->dongles)
-	{
-		free(sim->coders);
-		free(sim->dongles);
-		return (1);
-	}
-	sim->start_time = get_time();
-	sim->is_running = 1;
-	pthread_mutex_init(&sim->print_mutex, NULL);
-	if (init_dongles(sim))
-	{
-		free(sim->coders);
-		free(sim->dongles);
-		return (1);
-	}
-	if (init_coders(sim))
-	{
-		cleanup_dongles(sim, sim->nb_coders);
-		free(sim->coders);
-		free(sim->dongles);
-		return (1);
 	}
 	return (0);
 }

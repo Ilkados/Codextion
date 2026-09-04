@@ -17,6 +17,7 @@
 # include "queue.h"
 
 struct	s_coder;
+struct	s_simulation;
 
 typedef struct s_dongle
 {
@@ -28,6 +29,7 @@ typedef struct s_dongle
 }	t_dongle;
 
 int		take_dongle(t_dongle *dongle, struct s_coder *coder);
-void	release_dongle(t_dongle *dongle);
+void	release_dongle(t_dongle *dongle, struct s_simulation *sim);
+long	compute_priority(struct s_coder *coder);
 
 #endif

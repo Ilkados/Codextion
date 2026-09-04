@@ -45,6 +45,8 @@ void	*coder_routine(void *arg);
 void	smart_sleep(long sleep_time_in_ms, t_simulation *sim);
 int		execute_cycle(t_coder *coder, t_dongle *left, t_dongle *righ);
 int		take_both_dongles(t_dongle *first, t_dongle *second, t_coder *coder);
+int		can_take_both(t_dongle *first, t_dongle *second, t_coder *coder);
+long	pair_cooldown_wait(t_dongle *first, t_dongle *second, t_coder *coder);
 void	do_compile(t_coder *coder);
 void	do_debug(t_coder *coder);
 void	do_refactor(t_coder *coder);

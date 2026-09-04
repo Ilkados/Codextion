@@ -79,11 +79,11 @@ int	take_dongle(t_dongle *dongle, t_coder *coder)
 	return (1);
 }
 
-void	release_dongle(t_dongle *dongle)
+void	release_dongle(t_dongle *dongle, t_simulation *sim)
 {
-	pthread_mutex_lock(&dongle->mutex);
+	pthread_mutex_lock(&sim->resource_mutex);
 	dongle->is_taken = 0;
 	dongle->release_time = get_time();
-	pthread_cond_broadcast(&dongle->cond);
-	pthread_mutex_unlock(&dongle->mutex);
+	pthread_cond_broadcast(&sim->resource_cond);
+	pthread_mutex_unlock(&sim->resource_mutex);
 }

@@ -51,26 +51,3 @@ void	do_refactor(t_coder *coder)
 	log_action(coder->sim, coder->coder_id, REFACTORING);
 	smart_sleep(coder->sim->time_to_refactor, coder->sim);
 }
-
-int	take_both_dongles(t_dongle *first, t_dongle *second,
-				t_coder *coder)
-{
-	t_dongle	*tmp;
-
-	if (coder->coder_id % 2 == 0)
-	{
-		tmp = first;
-		first = second;
-		second = tmp;
-	}
-	if (take_dongle(first, coder))
-		return (1);
-	log_action(coder->sim, coder->coder_id, TOOK_DONGLE);
-	if (take_dongle(second, coder))
-	{
-		release_dongle(first);
-		return (1);
-	}
-	log_action(coder->sim, coder->coder_id, TOOK_DONGLE);
-	return (0);
-}

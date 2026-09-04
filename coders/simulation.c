@@ -31,15 +31,8 @@ void	stop_sim(t_simulation *sim)
 
 void	stop_and_wake_all(t_simulation *sim)
 {
-	int	i;
-
 	stop_sim(sim);
-	i = 0;
-	while (i < sim->nb_coders)
-	{
-		pthread_mutex_lock(&sim->dongles[i].mutex);
-		pthread_cond_broadcast(&sim->dongles[i].cond);
-		pthread_mutex_unlock(&sim->dongles[i].mutex);
-		i++;
-	}
+	pthread_mutex_lock(&sim->resource_mutex);
+	pthread_cond_broadcast(&sim->resource_cond);
+	pthread_mutex_unlock(&sim->resource_mutex);
 }
